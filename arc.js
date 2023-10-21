@@ -17,9 +17,18 @@ const IRLToken = new ARC200(6726425, algodClient, ARC200Spec, process.env.WALLET
 
 (async () => {
     const name = await IRLToken.arc200_name();
-    console.log(name);
+    console.log(name); //TODO: Doesn't Decode Correctly
+
+    const symbol = await IRLToken.arc200_symbol();
+    console.log(symbol); //TODO: Doesn't Decode Correctly
+    
     const totalSupply = await IRLToken.arc200_totalSupply();
     console.log(totalSupply);
+    
+    //TODO: Errors Out
+    //const decimals = await IRLToken.arc200_decimals();
+    //console.log(decimals);
+
     const balance = await IRLToken.arc200_balanceOf('C5NZ5SNL5EMOEVKFW3DS3DBG3FNMIYJAJY3U4I5SRCOXHGY33ML3TGHD24');
     console.log(balance);
 })();
