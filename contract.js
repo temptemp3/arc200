@@ -40,7 +40,8 @@ class CONTRACT {
         });
         
         // Sign the transaction
-        const signedTxn = txn.signTxn(privateKey);
+        // const signedTxn = txn.signTxn(privateKey);
+        const signedTxn = algosdk.encodeUnsignedSimulateTransaction(txn);
         
         // Construct the simulation request
         const request = new algosdk.modelsv2.SimulateRequest({
@@ -49,7 +50,8 @@ class CONTRACT {
                     txns: [algosdk.decodeObj(signedTxn)]
                 })
             ],
-            allowUnnamedResources: true
+            allowUnnamedResources: true,
+            allowEmptySignatures: true
         });
         
         // Simulate the transaction group
