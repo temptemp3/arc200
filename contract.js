@@ -40,7 +40,6 @@ class CONTRACT {
         });
         
         // Sign the transaction
-        // const signedTxn = txn.signTxn(privateKey);
         const signedTxn = algosdk.encodeUnsignedSimulateTransaction(txn);
         
         // Construct the simulation request
