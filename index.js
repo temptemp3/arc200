@@ -1,7 +1,7 @@
 require('dotenv').config();
 const algosdk = require('algosdk');
 
-const CONTRACT = require('./arc200.js');
+const CONTRACT = require('./contract.js');
 
 const algodToken = '';  // Your Algod API token
 const algodServer = process.env.ALGOD_URL;  // Address of your Algod node
