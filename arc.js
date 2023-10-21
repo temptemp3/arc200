@@ -26,9 +26,12 @@ const IRLToken = new ARC200(6726425, algodClient, ARC200Spec, process.env.WALLET
     console.log(totalSupply);
     
     //TODO: Errors Out
-    //const decimals = await IRLToken.arc200_decimals();
-    //console.log(decimals);
+    // const decimals = await IRLToken.arc200_decimals();
+    // console.log(decimals);
 
     const balance = await IRLToken.arc200_balanceOf('C5NZ5SNL5EMOEVKFW3DS3DBG3FNMIYJAJY3U4I5SRCOXHGY33ML3TGHD24');
     console.log(balance);
+
+    const allowance = await IRLToken.arc200_allowance('C5NZ5SNL5EMOEVKFW3DS3DBG3FNMIYJAJY3U4I5SRCOXHGY33ML3TGHD24','OOEDQF6YL44JOIFBDXWVNREBXQ4IL53JMTA32R66S7GLKEP5WC4CL4SFLE');
+    console.log(allowance);
 })();
