@@ -1,11 +1,7 @@
 require('dotenv').config();
-
-const ARC200SPEC = require("./ARC200.json");
-
 const algosdk = require('algosdk');
 
-const contractId = 6726425;
-const balanceAddress = 'C5NZ5SNL5EMOEVKFW3DS3DBG3FNMIYJAJY3U4I5SRCOXHGY33ML3TGHD24';
+const ARC200 = require('./arc200.js');
 
 const algodToken = '';  // Your Algod API token
 const algodServer = process.env.ALGOD_URL;  // Address of your Algod node
@@ -13,68 +9,31 @@ const algodPort = '';  // Port of your Algod node
 
 const algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
 
-const contractABI = new algosdk.ABIContract(ARC200SPEC);
+// Load ARC200 specification
+const ARC200Spec = require('./ARC200.json');
 
+// Now the methods are created when a new instance is constructed
+const IRLToken = new ARC200(6726425, algodClient, ARC200Spec, process.env.WALLET_MNEMONIC);
 
-async function createBalanceOfTxn(algodClient, contractId, address, contractABI) {
-    // Get the suggested transaction parameters
-    const params = await algodClient.getTransactionParams().do();
+(async () => {
+    const name = await IRLToken.arc200_name();
+    console.log(`Name: ${name}`); //TODO: Doesn't Decode Correctly
 
-    // Get the sender address from the mnemonic
-    const mnemonic = process.env.WALLET_MNEMONIC;
-    const { addr: senderAddress, sk: privateKey } = algosdk.mnemonicToSecretKey(mnemonic);
+    const symbol = await IRLToken.arc200_symbol();
+    console.log(`Symbol: ${symbol}`); //TODO: Doesn't Decode Correctly
+    
+    const totalSupply = await IRLToken.arc200_totalSupply();
+    console.log(`Total Supply: ${totalSupply}`);
+    
+    //TODO: Errors Out
+    const decimals = await IRLToken.arc200_decimals();
+    console.log(`Number of Decimals ${decimals}`);
 
-    const nameMethod = contractABI.getMethodByName("arc200_balanceOf");
+    const wallet1 = 'C5NZ5SNL5EMOEVKFW3DS3DBG3FNMIYJAJY3U4I5SRCOXHGY33ML3TGHD24';
+    const wallet2 = 'OOEDQF6YL44JOIFBDXWVNREBXQ4IL53JMTA32R66S7GLKEP5WC4CL4SFLE';
+    const balance = await IRLToken.arc200_balanceOf(wallet1);
+    console.log(`Balance of ${wallet1}: ${balance}`);
 
-    // Create the application call transaction object
-    const txn = algosdk.makeApplicationCallTxnFromObject({
-        suggestedParams: {
-            ...params,
-            flatFee: true,
-            fee: 1000
-        },
-        from: senderAddress,  
-        appIndex: contractId,
-        appArgs: [nameMethod.getSelector(), algosdk.decodeAddress(address).publicKey],
-    });
-
-    // Sign the transaction
-    const signedTxn = txn.signTxn(privateKey);
-
-    return {signedTxn, nameMethod};
-}
-
-
-
-
-createBalanceOfTxn(algodClient, contractId, balanceAddress, contractABI)
-    .then(({ signedTxn, nameMethod }) => {
-        const request = new algosdk.modelsv2.SimulateRequest({
-            txnGroups: [
-                new algosdk.modelsv2.SimulateRequestTransactionGroup({
-                    txns: [algosdk.decodeObj(signedTxn)]
-                })
-            ],
-            allowUnnamedResources:true
-        })
-
-        // Simulate the transaction group
-        algodClient.simulateTransactions(request).do()
-            .then(response => {
-                // Handle the simulation results
-                console.log(response);
-                const rlog = response.txnGroups[0].txnResults[0].txnResult.logs.pop();
-                console.log(rlog);
-                const rlog_ui = Uint8Array.from(Buffer.from(rlog, 'base64'));
-                const res_ui = rlog_ui.slice(4);
-                console.log({res_ui});
-
-                res = nameMethod.returns.type.decode(res_ui);
-                console.log({res});
-            })
-            .catch(error => {
-                // Handle any errors
-                console.error(error);
-            });
-    });
-
+    const allowance = await IRLToken.arc200_allowance(wallet1, wallet2);
+    console.log(`Allowance from: ${wallet1} to: ${wallet2} total: ${allowance}`);
+})();
