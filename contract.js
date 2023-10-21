@@ -64,7 +64,14 @@ class CONTRACT {
         const res_ui = rlog_ui.slice(4);
         
         // Decode the response based on the methodSpec
-        const result = abiMethod.returns.type.decode(res_ui);
+        //HACK: Hacking this because the decode function doesn't work on bytes
+        let result;
+        if (abiMethod.returns.type.childType == 'byte') {
+            result = new TextDecoder().decode(res_ui);
+        } else {
+            result = abiMethod.returns.type.decode(res_ui);
+        }
+        
         return result;
     }
 
