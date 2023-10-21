@@ -21,7 +21,7 @@
         "desc": "Returns the decimals of the token",
         "readonly": true,
         "args": [],
-        "returns": { "type": "uint8", "desc": "The decimals of the token" }
+        "returns": { "type": "uint64", "desc": "The decimals of the token" }
       },
       {
         "name": "arc200_totalSupply",

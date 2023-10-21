@@ -17,21 +17,23 @@ const IRLToken = new ARC200(6726425, algodClient, ARC200Spec, process.env.WALLET
 
 (async () => {
     const name = await IRLToken.arc200_name();
-    console.log(name); //TODO: Doesn't Decode Correctly
+    console.log(`Name: ${name}`); //TODO: Doesn't Decode Correctly
 
     const symbol = await IRLToken.arc200_symbol();
-    console.log(symbol); //TODO: Doesn't Decode Correctly
+    console.log(`Symbol: ${symbol}`); //TODO: Doesn't Decode Correctly
     
     const totalSupply = await IRLToken.arc200_totalSupply();
-    console.log(totalSupply);
+    console.log(`Total Supply: ${totalSupply}`);
     
     //TODO: Errors Out
-    // const decimals = await IRLToken.arc200_decimals();
-    // console.log(decimals);
+    const decimals = await IRLToken.arc200_decimals();
+    console.log(`Number of Decimals ${decimals}`);
 
-    const balance = await IRLToken.arc200_balanceOf('C5NZ5SNL5EMOEVKFW3DS3DBG3FNMIYJAJY3U4I5SRCOXHGY33ML3TGHD24');
-    console.log(balance);
+    const wallet1 = 'C5NZ5SNL5EMOEVKFW3DS3DBG3FNMIYJAJY3U4I5SRCOXHGY33ML3TGHD24';
+    const wallet2 = 'OOEDQF6YL44JOIFBDXWVNREBXQ4IL53JMTA32R66S7GLKEP5WC4CL4SFLE';
+    const balance = await IRLToken.arc200_balanceOf(wallet1);
+    console.log(`Balance of ${wallet1}: ${balance}`);
 
-    const allowance = await IRLToken.arc200_allowance('C5NZ5SNL5EMOEVKFW3DS3DBG3FNMIYJAJY3U4I5SRCOXHGY33ML3TGHD24','OOEDQF6YL44JOIFBDXWVNREBXQ4IL53JMTA32R66S7GLKEP5WC4CL4SFLE');
-    console.log(allowance);
+    const allowance = await IRLToken.arc200_allowance(wallet1, wallet2);
+    console.log(`Allowance from: ${wallet1} to: ${wallet2} total: ${allowance}`);
 })();
