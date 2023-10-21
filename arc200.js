@@ -1,6 +1,6 @@
 const algosdk = require('algosdk');
 
-class ARC200 {
+class CONTRACT {
     constructor(contractId, algodClient, spec, mnemonic) {
         this.contractId = contractId;
         this.algodClient = algodClient;
@@ -70,4 +70,4 @@ class ARC200 {
 
 }
 
-module.exports = ARC200;
+module.exports = CONTRACT;

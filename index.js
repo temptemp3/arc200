@@ -1,7 +1,7 @@
 require('dotenv').config();
 const algosdk = require('algosdk');
 
-const ARC200 = require('./arc200.js');
+const CONTRACT = require('./arc200.js');
 
 const algodToken = '';  // Your Algod API token
 const algodServer = process.env.ALGOD_URL;  // Address of your Algod node
@@ -13,7 +13,7 @@ const algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
 const ARC200Spec = require('./ARC200.json');
 
 // Now the methods are created when a new instance is constructed
-const IRLToken = new ARC200(6726425, algodClient, ARC200Spec, process.env.WALLET_MNEMONIC);
+const IRLToken = new CONTRACT(6726425, algodClient, ARC200Spec, process.env.WALLET_MNEMONIC);
 
 (async () => {
     const name = await IRLToken.arc200_name();
