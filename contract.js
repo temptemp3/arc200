@@ -39,7 +39,7 @@ class CONTRACT {
             });
 
             // Create the application call transaction object
-            const txn = algosdk.makeApplicationCallTxnFromObject({
+            const txn2 = algosdk.makeApplicationCallTxnFromObject({
                 suggestedParams: {
                     ...params,
                     flatFee: true,
@@ -50,14 +50,29 @@ class CONTRACT {
                 appArgs: [abiMethod.getSelector(), ...encodedArgs],  // Adjust appArgs based on methodSpec and args
             });
 
+            const txn1 = algosdk.makePaymentTxnWithSuggestedParams(
+                senderAddress,
+                algosdk.getApplicationAddress(this.contractId),
+                10000000,
+                undefined,
+                undefined,
+                {
+                    ...params,
+                    flatFee: true,
+                    fee: 1000
+                }
+              );
+
+            const txngroup = algosdk.assignGroupID([txn1,txn2]);
             // Sign the transaction
-            const signedTxn = algosdk.encodeUnsignedSimulateTransaction(txn);
+            const signedTxn = algosdk.encodeUnsignedSimulateTransaction(txngroup[0]);
+            const signedTxn2 = algosdk.encodeUnsignedSimulateTransaction(txngroup[1]);
 
             // Construct the simulation request
             const request = new algosdk.modelsv2.SimulateRequest({
                 txnGroups: [
                     new algosdk.modelsv2.SimulateRequestTransactionGroup({
-                        txns: [algosdk.decodeObj(signedTxn)]
+                        txns: [algosdk.decodeObj(signedTxn), algosdk.decodeObj(signedTxn2)]
                     })
                 ],
                 allowUnnamedResources: true,
@@ -80,7 +95,7 @@ class CONTRACT {
             if (response.txnGroups[0].failureMessage) {
                 throw (response.txnGroups[0].failureMessage);
             }
-            const rlog = response.txnGroups[0].txnResults[0].txnResult.logs.pop();
+            const rlog = response.txnGroups[0].txnResults[1].txnResult.logs.pop();
             const rlog_ui = Uint8Array.from(Buffer.from(rlog, 'base64'));
             const res_ui = rlog_ui.slice(4);
 
