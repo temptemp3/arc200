@@ -62,7 +62,7 @@
             "desc": "Amount of tokens to transfer"
           }
         ],
-        "returns": { "type": "bool", "desc": "Success" }
+        "returns": { "type": "byte", "desc": "Success" }
       },
       {
         "name": "arc200_transferFrom",
@@ -85,7 +85,7 @@
             "desc": "Amount of tokens to transfer"
           }
         ],
-        "returns": { "type": "bool", "desc": "Success" }
+        "returns": { "type": "byte", "desc": "Success" }
       },
       {
         "name": "arc200_approve",
@@ -95,7 +95,7 @@
           { "type": "address", "name": "spender" },
           { "type": "uint256", "name": "value" }
         ],
-        "returns": { "type": "bool", "desc": "Success" }
+        "returns": { "type": "byte", "desc": "Success" }
       },
       {
         "name": "arc200_allowance",

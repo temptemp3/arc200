@@ -42,5 +42,8 @@ const contractsData = [
 
         const allowance = await contractInstance.arc200_allowance(wallet1, wallet2);
         console.log(`Allowance from: ${wallet1} to: ${wallet2} total: ${allowance}`);
+
+        const transfer = await contractInstance.arc200_transfer(wallet1, 1);
+        console.log(transfer);
     }
 })();

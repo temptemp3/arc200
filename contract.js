@@ -10,9 +10,19 @@ class CONTRACT {
         for (const methodSpec of spec.methods) {
             const abiMethod = this.contractABI.getMethodByName(methodSpec.name);
             this[methodSpec.name] = async function(...args) {
-                return await this.createAndSimulateTxn(abiMethod, args);
+                if (methodSpec.readonly) {
+                    return await this.createAndSimulateTxn(abiMethod, args);
+                } else {
+                    return await this.createAndSimulateTxn(abiMethod, args);
+                    // const simulationResult = await this.createAndSimulateTxn(abiMethod, args);
+                    // return await this.createAndSendTxn(abiMethod, args, simulationResult);
+                }
             }.bind(this);
         }
+    }
+
+    async createAndSendTxn(abiMethod, args, simulationResult) {
+        // logic to create and send a real transaction using simulationResult
     }
     
     async createAndSimulateTxn(abiMethod, args) {
