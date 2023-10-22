@@ -14,7 +14,6 @@ const ARC200Spec = require('./ARC200.json');
 
 const contractsData = [
     { contractId: 6726425, contractInstanceName: "IRLToken" },
-    { contractId: 6726237, contractInstanceName: "DaveToken" },
     { contractId: 3905802, contractInstanceName: "VRC200" }
 ];
 
@@ -37,6 +36,8 @@ const contractsData = [
 
         const wallet1 = 'C5NZ5SNL5EMOEVKFW3DS3DBG3FNMIYJAJY3U4I5SRCOXHGY33ML3TGHD24';
         const wallet2 = 'OOEDQF6YL44JOIFBDXWVNREBXQ4IL53JMTA32R66S7GLKEP5WC4CL4SFLE';
+        const wallet3 = '3JOOMFDHWZ2YM2WD2HRPR6Q2DJ6KXH4WES3ZSYFVPZ3ORJQPNLL7LKNJRM';
+
         const balance = await contractInstance.arc200_balanceOf(wallet1);
         console.log(`Balance of ${wallet1}: ${balance}`);
 
@@ -45,5 +46,12 @@ const contractsData = [
 
         const transfer = await contractInstance.arc200_transfer(wallet1, 1);
         console.log(transfer);
+
+        const transferFrom = await contractInstance.arc200_transferFrom(wallet1, wallet2, 1);
+        console.log(transferFrom);
+
+        //TODO: Errors Out
+        // const approve = await contractInstance.arc200_approve(wallet1, 0);
+        // console.log(approve);
     }
 })();
