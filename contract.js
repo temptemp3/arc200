@@ -53,7 +53,7 @@ class CONTRACT {
             const txn1 = algosdk.makePaymentTxnWithSuggestedParams(
                 senderAddress,
                 algosdk.getApplicationAddress(this.contractId),
-                10000000,
+                100000,
                 undefined,
                 undefined,
                 {
