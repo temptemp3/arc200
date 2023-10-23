@@ -15,6 +15,7 @@ const ARC200Spec = require("./ARC200.json");
 const contractsData = [
   { contractId: 6726425, contractInstanceName: "IRLToken" },
   { contractId: 3905802, contractInstanceName: "VRC200" },
+  { contractId: 6728548, contractInstanceName: "VRC200v2" },
 ];
 
 const BalanceBoxCost = 28500;
