@@ -119,13 +119,26 @@ const AllowanceBoxSize = 32; // sha256([1,...addrFrom.pk, ...addrTo.pk])
           const balanceOfAddrTo = await contractInstance.arc200_balanceOf(
             addrTo
           );
+          const hasBalanceResponse = await contractInstance.hasBalance(addrTo);
+          // if not supported then hasBalanceResponse is true
+          const hasBalanceTo = ((hb) => (hb?.response ? true : hb))(
+            hasBalanceResponse
+          );
+          console.log(`    Has balance of ${addrTo}: ${hasBalanceTo}`);
+
           console.log(`    Balance of ${addrTo}: ${balanceOfAddrTo}`);
-          if (balanceOfAddrTo <= 0 && this.paymentAmount === 0) {
-            console.log(
-              "    Expect possible failure due to insufficient funds to pay for balance box"
-            );
+          if (balanceOfAddrTo <= 0) {
+            if (!hasBalanceTo && !!hasBalanceResponse?.response) {
+              console.log(
+                "    Expect failure due to insufficient funds to pay for balance box"
+              );
+            }
           }
           // -------------------------------------
+          if (!hasBalanceTo && !hasBalanceResponse?.response) {
+            console.log("    Pay for balance box");
+            contractInstance.setPaymentAmount(BalanceBoxCost);
+          }
           const response = await contractInstance
             .arc200_transfer(addrTo, amt)
             .catch(console.err);
