@@ -11,6 +11,7 @@ const algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
 
 // Load ARC200 specification
 const ARC200Spec = require("./ARC200.json");
+const ARC200Nonstandard = require("./ARC200Nonstandard.json"); // add non-standard methods such as hasBalance and hasAllowance
 
 const contractsData = [
   { contractId: 6726425, contractInstanceName: "IRLToken" },
@@ -30,7 +31,10 @@ const AllowanceBoxSize = 32; // sha256([1,...addrFrom.pk, ...addrTo.pk])
         new CONTRACT(
           contractData.contractId,
           algodClient,
-          ARC200Spec,
+          {
+            ...ARC200Spec,
+            methods: [...ARC200Spec.methods, ...ARC200Nonstandard.methods],
+          },
           process.env.WALLET_MNEMONIC
         );
       const contractInstance = newContractInstance();
@@ -61,9 +65,21 @@ const AllowanceBoxSize = 32; // sha256([1,...addrFrom.pk, ...addrTo.pk])
 
       const arc200_balanceOf = async (addr) => {
         const balance = await contractInstance.arc200_balanceOf(addr);
-        console.log(`BalanceOf`)
+        console.log(`BalanceOf`);
         console.log(`    ${addr}: ${balance}`);
         return balance;
+      };
+
+      const hasBalance = async (addr) => {
+        const hasBalance = await contractInstance.hasBalance(addr);
+        if (!hasBalance.response) {
+          console.log(`HasBalance`);
+          console.log(`    ${addr}: ${hasBalance}`);
+          console.log(hasBalance);
+          return hasBalance;
+        } else {
+          console.log("hasBalance not supported");
+        }
       };
 
       const arc200_allowance = async (addrSpender, addrFrom) => {
@@ -275,11 +291,17 @@ const AllowanceBoxSize = 32; // sha256([1,...addrFrom.pk, ...addrTo.pk])
       // BALANCES
 
       await arc200_balanceOf(senderAddress);
+      await hasBalance(senderAddress);
       await arc200_balanceOf(wallet1);
+      await hasBalance(wallet1);
       await arc200_balanceOf(wallet2);
+      await hasBalance(wallet2);
       await arc200_balanceOf(wallet3);
+      await hasBalance(wallet3);
       await arc200_balanceOf(wallet4);
+      await hasBalance(wallet4);
       await arc200_balanceOf(wallet5);
+      await hasBalance(wallet5);
 
       // ALLOWANCES
 
