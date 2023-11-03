@@ -21,7 +21,7 @@
       "desc": "Returns the decimals of the token",
       "readonly": true,
       "args": [],
-      "returns": { "type": "uint64", "desc": "The decimals of the token" }
+      "returns": { "type": "uint8", "desc": "The decimals of the token" }
     },
     {
       "name": "arc200_totalSupply",
@@ -62,7 +62,7 @@
           "desc": "Amount of tokens to transfer"
         }
       ],
-      "returns": { "type": "byte", "desc": "Success" }
+      "returns": { "type": "bool", "desc": "Success" }
     },
     {
       "name": "arc200_transferFrom",
@@ -85,7 +85,7 @@
           "desc": "Amount of tokens to transfer"
         }
       ],
-      "returns": { "type": "byte", "desc": "Success" }
+      "returns": { "type": "bool", "desc": "Success" }
     },
     {
       "name": "arc200_approve",
@@ -95,7 +95,7 @@
         { "type": "address", "name": "spender" },
         { "type": "uint256", "name": "value" }
       ],
-      "returns": { "type": "byte", "desc": "Success" }
+      "returns": { "type": "bool", "desc": "Success" }
     },
     {
       "name": "arc200_allowance",

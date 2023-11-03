@@ -1,8 +1,6 @@
-// examples/001-token-metadata.js
-
 import dotenv from "dotenv";
-import { newContractInstance } from "./util/contract.js";
-import arc200 from "./util/arc200.js";
+import { newContractInstance } from "../util/contract.js";
+import arc200 from "../util/arc200.js";
 
 dotenv.config();
 
