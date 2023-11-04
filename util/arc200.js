@@ -1,4 +1,35 @@
-import { newContractInstance } from "./contract.js";
+import CONTRACT from "../lib/contract.js";
+import ARC200Spec from "../abi/arc/200/contract.json" assert { type: "json" }; // spec
+import ARC200Extension from "../abi/arc/200/extension.json" assert { type: "json" }; // extension (non-standard methods)
+import algosdk from "algosdk";
+import dotenv from "dotenv";
+dotenv.config();
+const algodToken = ""; // Your Algod API token
+const algodServer = process.env.ALGOD_URL; // Address of your Algod node
+const algodPort = ""; // Port of your Algod node
+const algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
+
+/*
+ * init
+ * - initialize contract instance
+ * @param contractId: contract id
+ * @returns: contract instance
+ * @example:
+ * const contractInstance = init(contractId);
+ * const name = await contractInstance.arc200_name();
+ * console.log({ name });
+ * ...
+ */
+export const init = (contractId) =>
+  new CONTRACT(
+    contractId,
+    algodClient,
+    {
+      ...ARC200Spec,
+      methods: [...ARC200Spec.methods, ...ARC200Extension.methods], // mixin non-standard methods
+    },
+    process.env.WALLET_MNEMONIC
+  );
 
 /*
  * arc200_name
@@ -191,6 +222,7 @@ export const safe_arc200_transferFrom = async (ci, addrFrom, addrTo, amt) => {
  * @param amt: amount to approve
  * @returns: undefined
  */
+
 export const safe_arc200_approve = async (ci, addrSpender, amt) => {
   try {
     const contractInstance = newContractInstance(ci.getContractId());
@@ -212,21 +244,26 @@ export const safe_arc200_approve = async (ci, addrSpender, amt) => {
   }
 };
 
-export default (ci) => ({
-  arc200_name: async () => await arc200_name(ci),
-  arc200_symbol: async () => await arc200_symbol(ci),
-  arc200_totalSupply: async () => await arc200_totalSupply(ci),
-  arc200_decimals: async () => await arc200_decimals(ci),
-  arc200_balanceOf: async (addr) => await arc200_balanceOf(ci, addr),
-  arc200_allowance: async (addrFrom, addrSpender) =>
-    await arc200_allowance(ci, addrFrom, addrSpender),
-  safe_arc200_transfer: async (addrTo, amt) =>
-    await safe_arc200_transfer(ci, addrTo, amt),
-  safe_arc200_transferFrom: async (addrFrom, addrTo, amt) =>
-    await safe_arc200_transferFrom(ci, addrFrom, addrTo, amt),
-  safe_arc200_approve: async (addrSpender, amt) =>
-    await safe_arc200_approve(ci, addrSpender, amt),
-  hasBalance: async (addr) => await hasBalance(ci, addr),
-  hasAllowance: async (addrFrom, addrSpender) =>
-    await hasAllowance(ci, addrFrom, addrSpender),
-});
+export default {
+  init: (contractId) =>
+    ((contractInstance) => ({
+      arc200_name: async () => await arc200_name(contractInstance),
+      arc200_symbol: async () => await arc200_symbol(contractInstance),
+      arc200_totalSupply: async () =>
+        await arc200_totalSupply(contractInstance),
+      arc200_decimals: async () => await arc200_decimals(contractInstance),
+      arc200_balanceOf: async (addr) =>
+        await arc200_balanceOf(contractInstance, addr),
+      arc200_allowance: async (addrFrom, addrSpender) =>
+        await arc200_allowance(contractInstance, addrFrom, addrSpender),
+      safe_arc200_transfer: async (addrTo, amt) =>
+        await safe_arc200_transfer(contractInstance, addrTo, amt),
+      safe_arc200_transferFrom: async (addrFrom, addrTo, amt) =>
+        await safe_arc200_transferFrom(contractInstance, addrFrom, addrTo, amt),
+      safe_arc200_approve: async (addrSpender, amt) =>
+        await safe_arc200_approve(contractInstance, addrSpender, amt),
+      hasBalance: async (addr) => await hasBalance(contractInstance, addr),
+      hasAllowance: async (addrFrom, addrSpender) =>
+        await hasAllowance(contractInstance, addrFrom, addrSpender),
+    }))(init(contractId)),
+};

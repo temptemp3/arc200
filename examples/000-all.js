@@ -5,6 +5,8 @@ import ARC200Spec from "../abi/ARC200.json" assert { type: "json" }; // standard
 import ARC200Nonstandard from "../abi/ARC200Nonstandard.json" assert { type: "json" }; // add non-standard methods such as hasBalance and hasAllowance
 dotenvv.config();
 
+// TODO update this file to use utils/arc200.js
+
 /*
 const algosdk = require("algosdk");
 const CONTRACT = require("../lib/contract.js");

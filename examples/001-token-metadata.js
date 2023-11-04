@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import { newContractInstance } from "../util/contract.js";
 import arc200 from "../util/arc200.js";
 
 dotenv.config();
@@ -18,7 +17,7 @@ const contractsData = [
         arc200_symbol,
         arc200_totalSupply,
         arc200_decimals,
-      } = arc200(newContractInstance(contractData.contractId));
+      } = arc200.init(contractData.contractId);
       await arc200_name();
       await arc200_symbol();
       await arc200_totalSupply();
