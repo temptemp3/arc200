@@ -1,35 +1,29 @@
 import algosdk from "algosdk";
-import CONTRACT from "../lib/contract.js";
 import dotenvv from "dotenv";
-import ARC200Spec from "../abi/ARC200.json" assert { type: "json" }; // standard methods
-import ARC200Nonstandard from "../abi/ARC200Nonstandard.json" assert { type: "json" }; // add non-standard methods such as hasBalance and hasAllowance
+import CONTRACT from "../lib/contract.js";
+import ARC200Spec from "../abi/arc/200/contract.json" assert { type: "json" }; // standard methods
+import ARC200Nonstandard from "../abi/arc/200/extension.json" assert { type: "json" }; // add non-standard methods such as hasBalance and hasAllowance
+import arc200 from "../util/arc200.js";
+import { getAccountInfo } from "../util/account.js";
+import { getAccountAddress } from "../util/env.js";
+import { checkEqual } from "../util/check.js";
+
 dotenvv.config();
 
 // TODO update this file to use utils/arc200.js
 
-/*
-const algosdk = require("algosdk");
-const CONTRACT = require("../lib/contract.js");
-*/
-
 const algodToken = ""; // Your Algod API token
 const algodServer = process.env.ALGOD_URL; // Address of your Algod node
 const algodPort = ""; // Port of your Algod node
-
 const algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
-
-// Load ARC200 specification
-/*
-const ARC200Spec = require("../abi/ARC200.json");
-const ARC200Nonstandard = require("../abi/ARC200Nonstandard.json"); // add non-standard methods such as hasBalance and hasAllowance
-*/
 
 const contractsData = [
   { contractId: 6778021, contractInstanceName: "VRC200" }, // latest, has touch + grant method
 ];
 
+// OpenARC200v1 Info
 // minimum amount of tokens to create a balance box
-const BalanceBoxCost = 28501;
+const BalanceBoxCost = 28500;
 // unused for information only
 const BalanceBoxSize = 33; // [0, ...addrTo.pk]
 // unused for information only
@@ -55,6 +49,31 @@ const AllowanceBoxSize = 32; // sha256([1,...addrFrom.pk, ...addrTo.pk])
 
       // helper functions
 
+      const accountAddress = getAccountAddress();
+
+      const getAmount = async () => {
+        const { amount } = await getAccountInfo(accountAddress);
+        return amount;
+      };
+
+      const amountBefore = await getAmount();
+      console.log({ amountBefore });
+
+      const {
+        arc200_name,
+        arc200_symbol,
+        arc200_totalSupply,
+        arc200_decimals,
+        arc200_balanceOf,
+        arc200_allowance,
+        arc200_approve,
+        hasBalance,
+        hasAllowance,
+      } = arc200.init(contractData.contractId);
+
+      //getAccountInfo(contractInstance.getSenderAddress()).then(console.log);
+
+      /*
       const arc200_name = async () => {
         const name = await contractInstance.arc200_name();
         console.log(`Name:`);
@@ -116,6 +135,7 @@ const AllowanceBoxSize = 32; // sha256([1,...addrFrom.pk, ...addrTo.pk])
         console.log({ res: hasAllowance });
         return hasAllowance;
       };
+      */
 
       const safe_arc200_transfer = async (addrTo, amt) => {
         try {
@@ -254,13 +274,28 @@ const AllowanceBoxSize = 32; // sha256([1,...addrFrom.pk, ...addrTo.pk])
       // -----------------------------------------
       // Touch
       // Non-standard method that allows recovery of funds from
-      // drops or overspend from a contract to manager address 
+      // drops or overspend from a contract to manager address
       // -----------------------------------------
       console.log(`Touching contract...`);
       contractInstance.setFee(2000);
       await contractInstance.touch();
       // -----------------------------------------
       console.log(`Done processing ${contractData.contractInstanceName}`);
+
+      // wait for transaction to be confirmed
+
+      console.log(`Waiting for transaction to be confirmed...`)
+      setTimeout(() => {}, 20_000);
+      console.log(`Done waiting for transaction to be confirmed`)
+
+      const amountAfter = await getAmount();
+      console.log({ amountAfter });
+
+      const amountDiff = amountAfter - amountBefore;
+      console.log({ amountDiff });
+
+      checkEqual(amountDiff, 0, "Amount should not change");
+
     } catch (error) {
       console.error(
         `Error processing ${contractData.contractInstanceName}:`,
