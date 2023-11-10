@@ -1,4 +1,6 @@
 {
+  "name": "arc200",
+  "version": "1.0.0",
   "dependencies": {
     "algosdk": "^2.7.0",
     "dotenv": "^16.3.1"
@@ -6,5 +8,8 @@
   "type": "module",
   "devDependencies": {
     "express": "^4.18.2"
+  },
+  "scripts": {
+    "start": "node index.js"
   }
 }
