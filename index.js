@@ -1,7 +1,2 @@
-const printMsg = () => {
-  console.log("This is a message from the demo package");
-};
-
-export default {
-  printMsg,
-};
+import CONTRACT from "./src/lib/contract.js";
+export default CONTRACT;
