@@ -1,4 +1,5 @@
 import algosdk from "algosdk";
+import { Buffer } from buffer;
 import { oneAddress } from "../utils/account.js";
 
 export default class CONTRACT {
